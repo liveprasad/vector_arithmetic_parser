@@ -1,9 +1,11 @@
 
 %{ 
    /* Definition section */
-  #include<stdio.h> 
+  #include <stdio.h> 
+  //#include <string>
   #include "y.tab.h" 
-  extern int yylval; 
+  extern int yylval;
+  //extern yyerror(const char*); 
 %} 
   
 /* Rule Section */
