@@ -2,17 +2,16 @@
 %{ 
    /* Definition section */
   #include <stdio.h> 
-  //#include <string>
   #include "y.tab.h" 
-  extern int yylval;
+  //extern int yylval;
   //extern yyerror(const char*); 
 %} 
   
 /* Rule Section */
 %% 
-[0-9]+ { 
-          yylval=atoi(yytext); 
-          return NUMBER; 
+[a-zA-Z0-9]+ { 
+          yylval.str=strdup(yytext); 
+          return ID; 
   
        } 
 [\t] ; 

@@ -10,7 +10,7 @@ class DataLoader{
     //DataLoader();
     //~DataLoader();
     virtual DataHolder* getData(std::string code) = 0;
-    virtual DataHolder* addData(DataHolder* data) = 0;
+    virtual void insertData(DataHolder* data) = 0;
     
 };
 #endif
