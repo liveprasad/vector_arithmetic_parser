@@ -2,66 +2,97 @@
 %{ 
    /* Definition section */
    #include "parser.hpp"
-  
-   //extern int yylex();
-   //extern yy_buffer_state;
-   //typedef struct  yy_buffer_state *YY_BUFFER_STATE;
-   //extern YY_BUFFER_STATE yy_scan_string(const char * str);
-   //extern void yy_delete_buffer(YY_BUFFER_STATE);
-   //extern void  yyerror(const char *);
-   //extern int yyparse();
-   //int flag = 0;
-   //extern YY_BUFFER_STATE yy_scan_buffer(char *, size_t);
+   Parser* Parser::INSTANCE=0;
+    
 %} 
-  
-%token NUMBER 
-  
+ 
+%union {
+  char* str;
+  //int int_val;
+}
+%start exp
+
+%token ID 
+ 
 %left '+' '-'
   
 %left '*' '/' '%'
   
 %left '(' ')'
+
+%type<str> E ID exp
   
 /* Rule Section */
 %% 
   
-ArithmeticExpression: E{ 
+exp: E{ 
   
-         printf("\nResult=%d\n", $$); 
+         printf("\nResult=%s\n",$$ ); 
   
          return 0; 
   
         }; 
- E:E'+'E {$$=$1+$3;} 
+ E:E'+'E{
+             //$$ = std::string($1)+ std::string($2);
+ 	    std::string s = Parser::getInstance()->add(std::string($1) , std::string($3));
+	    $$ = &s[0];
+	} 
   
- |E'-'E {$$=$1-$3;} 
+ |E'-'E {
+ 	    std::string s = Parser::getInstance()->sub(std::string($1) , std::string($3));
+	    $$ = &s[0];
+	} 
   
- |E'*'E {$$=$1*$3;} 
+ |E'*'E {
+ 	    std::string s = Parser::getInstance()->mul(std::string($1) , std::string($3));
+	    $$ = &s[0];
+       } 
   
- |E'/'E {$$=$1/$3;} 
+ |E'/'E {$$=$1;} 
   
- |E'%'E {$$=$1%$3;} 
+ |E'%'E {$$=$1;} 
   
  |'('E')' {$$=$2;} 
   
- | NUMBER {$$=$1;} 
+ | ID {
+        $$=$1;
+        #ifdef DEB
+           printf("%s  is the id \n", $1);
+        #endif
+ } 
   
  ; 
   
 %% 
   
 //driver code 
+Parser* Parser:: initialize( DataLoader *loader){
 
-Parser::Parser(){
+  if(Parser::getInstance() == nullptr){
+    Parser::INSTANCE = new Parser(loader);
+  }
+  return Parser::INSTANCE;
+}
+
+Parser* Parser::getInstance(){
+  return Parser::INSTANCE;
+}
+
+Parser::Parser( DataLoader * loader){
+  this->loader = loader;
+  cache = new DataCache(loader);
 }
 
 Parser::~Parser(){
+      delete cache;
 }
 
 int Parser::evaluate(const char* expression) 
 { 
    //char *s=(char *) malloc(5000* sizeof(char));
-   printf("provided expression is %s",expression );
+   #ifdef DEB
+     printf("provided expression is %s****\n",expression );
+   #endif
    YY_BUFFER_STATE buffer = yy_scan_string(expression);
    int r = yyparse();
    yy_delete_buffer(buffer);
@@ -76,6 +107,20 @@ void yyerror(const char* err)
    flag=1; 
 }
 
-void Parser::add(std::string id1,std::string id2){
-  *(cache->getData(id1)) +*( cache->getData(id2));
+std::string Parser::add(std::string id1,std::string id2){
+   DataHolder *result= *(cache->getData(id1)) + cache->getData(id2);
+   cache->insertData(result);
+   return result->getId();
+}
+
+std::string Parser::sub(std::string id1, std::string id2){
+   DataHolder *result= *(cache->getData(id1))-cache->getData(id2);
+   cache->insertData(result);
+   return result->getId();
+}
+
+std::string Parser::mul(std::string id1,std::string id2){ 
+   DataHolder *result= *(cache->getData(id1))*cache->getData(id2);
+   cache->insertData(result);
+   return result->getId();
 }
