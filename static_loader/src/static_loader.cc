@@ -41,10 +41,6 @@ StaticLoader::StaticLoader(std::string path){
 	inMemoryDatabase->insert(std::make_pair(v->at(1), v));
 	v =  new std::vector<std::string>;
       }
-      //if(inMemoryDatabase->size() == DEFINED_SIZE)
-	//break;
-      fflush(stdin);
-      printf("%d : %s\n", ++i,pch);
       pch = strtok (NULL," \n");
   }
   printf("file read is successful : %lu \n",inMemoryDatabase->size());
@@ -84,8 +80,7 @@ void StaticLoader::insertData(DataHolder* data) {
 DataHolder* StaticLoader:: transformVector(std::vector<std::string> *v,DataType::Type data_type,std::vector<std::string> * vectorMeasurementsString){
   //std::vector<T> * measurements = new std::vector<T>;
   #ifdef DEB
-    std::cout<<"started the tranforamtion : " << vectorMeasurementsString->size()<< std::endl;
-  
+    std::cout<<"started the tranforamtion : " << vectorMeasurementsString->size()<< std::endl; 
   #endif
   switch(data_type){
     case DataType::Type::INT:
@@ -93,9 +88,9 @@ DataHolder* StaticLoader:: transformVector(std::vector<std::string> *v,DataType:
 	std::vector<int>* measurements =new std::vector<int>;
         std::transform(vectorMeasurementsString->begin(), vectorMeasurementsString->end(), std::back_inserter(*measurements), [](std::string str) { return std::stoi(str); });
         delete vectorMeasurementsString;
-        #ifdef DEB
+        /*#ifdef DEB
 	  std::for_each(measurements->begin(), measurements->end(), [](int val){ std::cout<<val<<" ";});
-        #endif
+        #endif*/
 	return new Data<int>(v->at(0),v->at(1),v->at(2) ,data_type,measurements);
       }
     case DataType::Type::DOUBLE:
@@ -105,9 +100,9 @@ DataHolder* StaticLoader:: transformVector(std::vector<std::string> *v,DataType:
 	    return std::stod(str); 
 	 });
         delete vectorMeasurementsString;
-        #ifdef DEB
+        /*#ifdef DEB
 	  std::for_each(measurementDouble->begin(), measurementDouble->end(), [](double val){ std::cout<<val<<" ";});
-        #endif
+        #endif*/
         return new Data<double>(v->at(0),v->at(1),v->at(2) ,data_type,measurementDouble);
       }
     case DataType::Type::BIT:
@@ -115,9 +110,9 @@ DataHolder* StaticLoader:: transformVector(std::vector<std::string> *v,DataType:
 	std::vector<bool>* measurementBool =new std::vector<bool>;
         std::transform(vectorMeasurementsString->begin(), vectorMeasurementsString->end(), std::back_inserter(*measurementBool), [](std::string str) {  return str != "0" ;});
         delete vectorMeasurementsString;
-        #ifdef DEB
+        /*#ifdef DEB
 	  std::for_each(measurementBool->begin(), measurementBool->end(), [](bool val){ std::cout<<val<<" ";});
-        #endif
+        #endif*/
         return new Data<bool>(v->at(0),v->at(1),v->at(2) ,data_type,measurementBool);
       } 
     case DataType::Type::STRING:

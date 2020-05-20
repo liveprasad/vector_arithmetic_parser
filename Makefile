@@ -2,7 +2,7 @@ CC=g++
 INCLUDE :=${PARSER_ROOT}/include
 SRC := ${PARSER_ROOT}/src
 OUT := ${PARSER_ROOT}/out
-CFLAGS := -shared  -g -std=c++11 -DDEB
+CFLAGS := -shared  -g -std=c++11 
 LIB_DATA := libparser.so
                    
 all : ${LIB_DATA}
@@ -23,7 +23,7 @@ out/lexer : ${SRC}/parser.l
 	flex -o out/src/lex.yy.c  ${SRC}/parser.l
 
 obj/parser : ${OUT}/src/y.tab.c
-	${CC} -fPIC ${CFLAGS} -c  -o  ${OUT}/obj/parser.o  ${OUT}/src/y.tab.c  -I./include -I./out/include
+	${CC} -fPIC ${CFLAGS} -c  -o  ${OUT}/obj/parser.o  ${OUT}/src/y.tab.c  -I./include -I./out/include -DDEB
 
 obj/lexer : ${OUT}/src/lex.yy.c
 	${CC} -fPIC ${CFLAGS} -c -o ${OUT}/obj/lexer.o ${OUT}/src/lex.yy.c -I./include -I./out/include
