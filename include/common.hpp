@@ -4,7 +4,7 @@
 #include <iostream>
 class DataType {
   public:
-    enum Type { INT,BIT,STRING,DOUBLE };
+    enum Type { BIT,INT,STRING,DOUBLE };
     static Type _from_string(const std::string& str)
     {
 	if(str == "int") return INT;

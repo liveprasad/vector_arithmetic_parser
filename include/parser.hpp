@@ -22,6 +22,7 @@ class Parser{
       DataLoader *loader;
       DataCache *cache; 
       Parser(DataLoader* );
+      std::string expressionId;
       static Parser* INSTANCE;
     public:
       Parser(Parser &other)= delete;
@@ -29,8 +30,10 @@ class Parser{
       static Parser *initialize(DataLoader *loader);
       static Parser *getInstance();
       int evaluate(const char * str);
+      std::string getExpressionId();
       std::string add(std::string id1,std::string id2);
       std::string sub(std::string id1,std::string id2);
+      std::string div(std::string id1,std::string id2);
       std::string mul(std::string id1,std::string id2);
       std::string bitwiseOr(std::string id1,std::string id2);
       std::string biwiseAnd(std::string id1,std::string id2);
