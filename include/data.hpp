@@ -7,6 +7,7 @@
 #include <vector>
 #include <iterator>
 #include <stddef.h>
+#include <cmath>
 class DataHolder{
   protected:
     std::string uuid;
@@ -26,7 +27,13 @@ class DataHolder{
     virtual DataHolder* operator*(DataHolder *  ) = 0;
     virtual DataHolder* operator-(DataHolder *  ) = 0;
     virtual DataHolder* operator/(DataHolder *  ) = 0;
+    virtual DataHolder* operator%(DataHolder *  ) = 0;
     //copy contstructor DataHolder(const DataHolder& other);
+    virtual DataHolder* operator|(DataHolder *  ) = 0;
+    virtual DataHolder* operator&(DataHolder *  ) = 0;
+    virtual DataHolder* operator!( ) = 0;
+    virtual DataHolder* operator-( ) = 0;//conflicting with binary - operations and hence not enabled to be invoked directly by using dataholder reference
+    virtual DataHolder* operator==(std::string s) = 0;
 };
 
 template<class T>
@@ -40,21 +47,72 @@ class Data:public DataHolder{
     Data(DataType::Type data_type , std::string defination, std::string id,std::vector<T> *v);
     ~Data();
     std::vector<T>* getMeasurements();
+    //all operations which are invoked directly by using the reference to dataholders 
+    //arthmatic operators
     DataHolder* operator+(DataHolder *);
-    DataHolder* operator-(DataHolder *);
+    DataHolder* operator-(DataHolder *);//implemented using binary + and unary - operator
     DataHolder* operator*(DataHolder *);
     DataHolder* operator/(DataHolder *);
+    DataHolder* operator%(DataHolder *);
+    //logical operators
+    DataHolder* operator|(DataHolder *  ) ;
+    DataHolder* operator&(DataHolder *  ) ;
+
+    //actual implementations of operators for which second argument is casted in S type Data
+    //all binary operators
+    //arthmatic opetators
     template<typename S>
     DataHolder* operator+(Data<S>* );
-    /*template<typename S>
-    DataHolder* operator-(Data<S>* );*/
     template<typename S>
     DataHolder* operator*(Data<S>* );
     template<typename S>
     DataHolder* operator/(Data<S>* );
+    template<typename S>
+    DataHolder* operator%(Data<S>* );
+    
+    //logical operators
+    template<typename S>
+    DataHolder* operator|(Data<S>* );
+    template<typename S>
+    DataHolder* operator&(Data<S>* );
+    
+    //comparision operators
+    DataHolder* operator==(std::string s){
+	return NULL;
+    }
+    //unary operators
+    //arithmatic operators
     Data<T>* operator-( );
     Data<T>* reciprocal( );
+    //unary opatator 
+    Data<T>* operator!();
+    //string tranformations 
     std::vector<std::string>* transformVectorToString();
     //copy constructor Data(const Data<T>& other);
 };
+
+class DataString : public DataHolder{
+  private:
+    std::vector<std::string>* vectorMeasurements;
+  public:
+    DataString(std::string uuid,std::string id,std::string defination,std::vector<std::string>* vectorMeasurements);
+    DataHolder* operator+(DataHolder *  ) {return NULL;}
+    DataHolder* operator*(DataHolder *  ) {return NULL;}
+    DataHolder* operator-(DataHolder *  ) {return NULL;}
+    DataHolder* operator/(DataHolder *  ) {return NULL;}
+    DataHolder* operator%(DataHolder *  ) {return NULL;}
+    //copy contstructor DataHolder(const DataHolder& other);
+    
+    //comparision operators
+    DataHolder* operator==(std::string match);
+    //logical operators
+    DataHolder* operator|(DataHolder *  ) {return NULL;}
+    DataHolder* operator&(DataHolder *  ) {return NULL;}
+    DataHolder* operator!( ) {return NULL;}
+    DataHolder* operator-( ) {return NULL;} //conflicting with binary - operations and hence not enabled to be invoked directly by using dataholder reference
+    std::vector<std::string>* transformVectorToString(){
+	return vectorMeasurements;
+    };
+};
+
 #endif

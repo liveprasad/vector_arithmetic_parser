@@ -13,12 +13,16 @@
           yylval.str=strdup(yytext); 
           return ID; 
   
-       } 
-[\t] ; 
+       }
+\"(\\.|[^"\\])*\" {
+          yylval.str=strdup(yytext);
+	  return MATCH;
+       }   
+[ \t] ; 
   
 [\n] return 0; 
   
-. return yytext[0]; 
+. { return yytext[0] ;} 
   
 %% 
   

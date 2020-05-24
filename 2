@@ -503,20 +503,15 @@ template class Data<int>;
 //template class Data<std::string>;
 template class Data<bool>;
 
-DataString::DataString(std::string uuid,std::string id,std::string defination,std::vector<std::string>* vectorMeasurements){
-  
+DataString::DataString(std::string uuid,std::string id,std::string defination,std::vector<string>* vectorMeasurements){
   this->id = id;
   this->defination = defination;
   this->uuid= uuid;
   this->data_type = DataType::Type::STRING;
   this->vectorMeasurements = vectorMeasurements;
-  std::cout<<"allocations of data of size  "<< vectorMeasurements->size() <<std::endl ;
 }
 
-DataHolder* DataString::operator==(std::string pattern){
-#ifdef DEB
-  std::cout<<"= operator overloaded for string vector " << id << " and "<< "search " << pattern << std::endl; 
-#endif
+Data<bool>* DataString::buildValueVector(std::string pattern){
   std::vector<bool>* v = new std::vector<bool>; 
   Data<bool>* data = new Data<bool>(DataType::Type::BIT,defination+"="+pattern,id,v);
   v->reserve(vectorMeasurements->size());

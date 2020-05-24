@@ -23,7 +23,7 @@ class Parser{
       DataCache *cache; 
       Parser(DataLoader* );
       std::string expressionId;
-      static Parser* INSTANCE;
+      static Parser* INSTANCE ;
     public:
       Parser(Parser &other)= delete;
       ~Parser();
@@ -35,8 +35,12 @@ class Parser{
       std::string sub(std::string id1,std::string id2);
       std::string div(std::string id1,std::string id2);
       std::string mul(std::string id1,std::string id2);
+      std::string mod(std::string id1,std::string id2);
+      std::string match(std::string id,std::string match);
+      std::string uMinus(std::string id);
       std::string bitwiseOr(std::string id1,std::string id2);
-      std::string biwiseAnd(std::string id1,std::string id2);
+      std::string bitwiseAnd(std::string id1,std::string id2);
+      std::string bitwiseNot(std::string id);
       DataCache* getCache();
 };
 
