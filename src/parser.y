@@ -2,7 +2,7 @@
 %{ 
    /* Definition section */
    #include "parser.hpp"
-   Parser* Parser::INSTANCE=0;
+   Parser * Parser::INSTANCE = 0;
 %} 
  
 %union {
@@ -11,15 +11,17 @@
 }
 %start exp
 
-%token ID 
+%token ID MATCH 
  
 %left '+' '-'
   
 %left '*' '/' '%'
   
-%left '(' ')'
+%left '(' ')' 
 
-%type<str> E ID exp
+%left '='
+
+%type<str> E ID exp MATCH
   
 /* Rule Section */
 %% 
@@ -47,14 +49,31 @@ exp: E{
 	} 
   
  |E'*'E {
- 	     $$ = strdup(Parser::getInstance()->mul(std::string($1) , std::string($3)).c_str());
+ 	    $$ = strdup(Parser::getInstance()->mul(std::string($1) , std::string($3)).c_str());
         } 
   
  |E'/'E {
- 	     $$ = strdup(Parser::getInstance()->div(std::string($1) , std::string($3)).c_str());
+ 	    $$ = strdup(Parser::getInstance()->div(std::string($1) , std::string($3)).c_str());
+        }
+ |'-'E  {
+	    $$ = strdup(Parser::getInstance()->uMinus(std::string($2)).c_str());
+        }
+ |E'|'E {
+  	    $$ = strdup(Parser::getInstance()->bitwiseOr(std::string($1),std::string($3)).c_str());
+        }  
+ |E'&'E {
+            $$ = strdup(Parser::getInstance()->bitwiseAnd(std::string($1),std::string($3)).c_str());
+	}
+ |'!'E  {
+ 	    $$ = strdup(Parser::getInstance()->bitwiseNot(std::string($2)).c_str());
+ 
+        }
+ |E'%'E {
+            $$ = strdup(Parser::getInstance()->mod(std::string($1),std::string($3)).c_str());
         } 
-  
- |E'%'E {$$=$1;} 
+|E'='MATCH {
+            $$ = strdup(Parser::getInstance()->match(std::string($1),std::string($3)).c_str());  
+        }
   
  |'('E')' {$$=$2;} 
   
@@ -63,7 +82,7 @@ exp: E{
         #ifdef DEB
            printf("%s  is the id \n", $1);
         #endif
- } 
+      } 
   
  ; 
   
@@ -117,6 +136,7 @@ void yyerror(const char* err)
    flag=1; 
 }
 
+//invoking binary operators
 std::string Parser::add(std::string id1,std::string id2){
    std::cout<<"******" << id1 << '+'<< id2<<"******" <<std::endl; 
    DataHolder *result= *(cache->getData(id1)) + cache->getData(id2);
@@ -128,7 +148,6 @@ std::string Parser::sub(std::string id1, std::string id2){
    std::cout<<"******" << id1 << '-'<< id2<<"******"<<std::endl; 
    DataHolder *result= *(cache->getData(id1))-cache->getData(id2);
    cache->insertData(result);
-   std::cout<<"substraction result is stored as " << result->getId() << std::endl;
    return result->getId();
 }
 
@@ -136,7 +155,6 @@ std::string Parser::mul(std::string id1,std::string id2){
    std::cout<<"******" << id1 << '*'<< id2 <<"******" <<std::endl; 
    DataHolder *result= *(cache->getData(id1))*cache->getData(id2);
    cache->insertData(result);
-   std::cout<< "multiplication result is stored as" << result->getId()<<std::endl;
    return result->getId();
 }
 
@@ -145,6 +163,52 @@ std::string Parser::div(std::string id1,std::string id2){
    DataHolder *result= *(cache->getData(id1)) / cache->getData(id2);
    cache->insertData(result);
    return result->getId();
+}
+
+std::string Parser::bitwiseOr(std::string id1,std::string id2){
+   std::cout<<"******" << id1 << '|'<< id2<<"******" <<std::endl; 
+   DataHolder *result= *(cache->getData(id1)) | cache->getData(id2);
+   cache->insertData(result);
+   return result->getId();
+}
+
+std::string Parser::bitwiseAnd(std::string id1,std::string id2){
+   std::cout<<"******" << id1 << '&'<< id2<<"******" <<std::endl; 
+   DataHolder *result= *(cache->getData(id1)) & cache->getData(id2);
+   cache->insertData(result);
+   return result->getId();
+}
+
+std::string Parser::mod(std::string id1,std::string id2){
+   std::cout<<"******" << id1 << '%'<< id2<<"******" <<std::endl; 
+   DataHolder *result= *(cache->getData(id1)) % cache->getData(id2);
+   cache->insertData(result);
+   return result->getId();
+}
+
+std::string Parser::match(std::string id,std::string match){
+    match = match.substr(1,match.length()-2);
+   std::cout<<"******" << id << '='<< match<<"******" <<std::endl; 
+   DataHolder *result=(*(cache->getData(id)) == match);
+   cache->insertData(result);
+   return result->getId();
+}
+
+//invoking unary operations
+std::string Parser::uMinus(std::string id){
+   std::cout<<"******" <<  '-'<< id<<"******" <<std::endl; 
+   DataHolder *result= -*(cache->getData(id));
+   cache->insertData(result);
+   return result->getId();
+  
+}
+
+std::string Parser::bitwiseNot(std::string id){
+   std::cout<<"******" <<  '!'<< id<<"******" <<std::endl; 
+   DataHolder *result= !*(cache->getData(id));
+   cache->insertData(result);
+   return result->getId();
+  
 }
 
 std::string Parser::getExpressionId(){

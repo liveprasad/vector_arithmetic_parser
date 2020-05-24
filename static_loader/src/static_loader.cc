@@ -118,7 +118,10 @@ DataHolder* StaticLoader:: transformVector(std::vector<std::string> *v,DataType:
     case DataType::Type::STRING:
       //vectorMeasurements =(std::vector<T>*)  vectorMeasurementsString;
      {
-        return NULL;
+        #ifdef DEB
+	  std::for_each(vectorMeasurementsString->begin(), vectorMeasurementsString->end(), [](std::string val){ std::cout<<val<<" ";});
+        #endif
+        return new DataString(v->at(0),v->at(1),v->at(2),vectorMeasurementsString);
      }
     default:
       printf("no macthing");

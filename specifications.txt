@@ -1,0 +1,61 @@
+Most critical operations are bitstring (boolean) OR / AND / NOT  of vectors
+Arithmetic for numbers/bits/double can be done easily.
+
+For text the operations will be the ones that search for strings within text vectors and yield a boolean vector
+
+for example
+
+Expression  state = "NY"   returns  a  bitstring vecto  which is 0 / 1 depending on entries on text vector state = NY or not.
+
+Expression gender_male and  state = "NY"   returns  a vector that "AND"s the bitstring vector gender_male and the (resultant) bitstring vector "state = NY" which is 0 / 1 depending on whether state = NY or not.
+
+sample_table
+
+Column 1: id   (uuid)
+
+Column 2: code (character varying(100) )
+
+Column3: definition (character varying(5000) )
+
+Column 4: data_type (character varying(100) )
+
+Column 5: vector_measurements (array, type defined by data_type: bitstring, double_precision, number, text, ... )
+
+uuid    code    definition      data_type       vector_measurements
+00105c10-16f2-4ddc-8c37-5796d5a13cdc    col1022 col1022 bit     0101000000011000000000010010010000000000
+001c2b44-cc1b-4886-b378-b40dc0ced64c    col1510 col1510 bit     0000100000000000000000000000000000000110
+00213a3f-1c5b-414c-9442-99abcbd37fc7    col697  col697  double  {2,4,0,6,4,0,0,1,3,0,3,0,5,0,0,0,0,4,1,2,2,2,1,7,0,0,3,0,0,4,4,0,0,6,0,1,6,2,0}
+002b10b4-69b0-4dc4-8853-9195d960cf08    col635  col635  bit     0100001010101000000000100101000101010100
+002e4a58-73a6-465b-b560-172daf6e84e8    col264  col264  double  {4,3,3,3,3,3,3,4,4,3,3,4,3,4,4,4,3,4,4,4,4,2,4,3,3,3,3,2,2,4,3,3,3,2,3,4,2,3,4}
+
+Note 1:  all arrays within sample_table contain the same number of elements.  The array length could be very large (eg 500,000)
+
+Note 2: when code = definition we will refer to the definition as "elemental" (ie can't be decomposed further)
+
+Goal:  create function AddRow (table,  new_code, definition) that will calculate and add non-elemental rows to table as illustrated below.
+
+Example:
+
+AddRow ( sample_table,  foo, "col1022 or col635") would have a return code 0; vector_measurements would be the OR of the two bit-string vectors.
+
+00508631-7e59-44ec-a440-704ebc6289c7f   foo     col1022 or col635       bit
+010100101011100000000011011101010101010000
+
+
+
+
+AddRow ( sample_table,  bar , "col697 + col264")   ==> return code 0;  vector_measurements is sum of two vectors col697 and col264:
+
+00213a3f-12321414c-9442-99abcbd37fc7    bar     col697 + col264 double  {6,7,3,9,7,3,3,5,7,3,6,4,8,4,4,4,3,8,5,6,6,4,5,10,3,3,6,2,2,8,7,3,3,8,3,5,8,5,4}
+
+
+AddRow ( sample_table,  try , "col1022 or col264") ==> return code 9 ; Syntax Error at position 9 ("or" -invalid expression)
+
+AddRow ( sample_table,  try2 , "xol1022 or col264") ==> return code 1 ; Syntax Error at position 1 ("xol1022"  not a code in the table)
+
+
+If "definition" invokes a non-elemental component , it will be resolved recursively.  For example, it would need to burrow a level to resolve "foo" and come up to resolve the rest of "definition"
+
+AddRow ( sample_table,  recursive_foo1, "foo or col1510") ==>  return code 0;   vector_measurements would be the OR of foo (recreated from its definition) and col1510
+
+001c2b44-cc1b-4886-b378-b000c0ced64c    recursive_foo1  foo or col1510  bit     010100010001100000000001001001010010001100
