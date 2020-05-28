@@ -141,57 +141,73 @@ void yyerror(const char* err)
 
 //invoking binary operators
 std::string Parser::add(std::string id1,std::string id2){
+   #ifdef DEB 
    std::cout<<"******" << id1 << '+'<< id2<<"******" <<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1)) + cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::sub(std::string id1, std::string id2){
+   #ifdef DEB 
    std::cout<<"******" << id1 << '-'<< id2<<"******"<<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1))-cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::mul(std::string id1,std::string id2){ 
+   #ifdef DEB 
    std::cout<<"******" << id1 << '*'<< id2 <<"******" <<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1))*cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::div(std::string id1,std::string id2){
+   #ifdef DEB 
    std::cout<<"******" << id1 << '/'<< id2<<"******" <<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1)) / cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::bitwiseOr(std::string id1,std::string id2){
+   #ifdef DEB 
    std::cout<<"******" << id1 << '|'<< id2<<"******" <<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1)) | cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::bitwiseAnd(std::string id1,std::string id2){
+   #ifdef DEB 
    std::cout<<"******" << id1 << '&'<< id2<<"******" <<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1)) & cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::mod(std::string id1,std::string id2){
+   #ifdef DEB 
    std::cout<<"******" << id1 << '%'<< id2<<"******" <<std::endl; 
+   #endif
    DataHolder *result= *(cache->getData(id1)) % cache->getData(id2);
    cache->insertData(result);
    return result->getId();
 }
 
 std::string Parser::match(std::string id,std::string match){
-    match = match.substr(1,match.length()-2);
+   match = match.substr(1,match.length()-2);
+   #ifdef DEB 
    std::cout<<"******" << id << '='<< match<<"******" <<std::endl; 
+   #endif
    DataHolder *result=(*(cache->getData(id)) == match);
    cache->insertData(result);
    return result->getId();
@@ -199,7 +215,9 @@ std::string Parser::match(std::string id,std::string match){
 
 //invoking unary operations
 std::string Parser::uMinus(std::string id){
+   #ifdef DEB 
    std::cout<<"******" <<  '-'<< id<<"******" <<std::endl; 
+   #endif
    DataHolder *result= -*(cache->getData(id));
    cache->insertData(result);
    return result->getId();
@@ -207,7 +225,9 @@ std::string Parser::uMinus(std::string id){
 }
 
 std::string Parser::bitwiseNot(std::string id){
+   #ifdef DEB 
    std::cout<<"******" <<  '!'<< id<<"******" <<std::endl; 
+   #endif
    DataHolder *result= !*(cache->getData(id));
    cache->insertData(result);
    return result->getId();
