@@ -12,9 +12,11 @@ return rhs + lhs;
 }*/
 
 DataHolder::DataHolder(){
+   vectorMeasurementsString = NULL;
 }
 
 DataHolder::~DataHolder(){
+   delete vectorMeasurementsString;
 }
 
 std::string DataHolder:: getUuid(){
@@ -32,6 +34,10 @@ DataType::Type DataHolder:: getType(){
 
 void DataHolder::setId(std::string id){
   this->id = id;
+}
+
+void DataHolder::setDefination(std::string defination){
+  this->defination = defination;
 }
 //copy constructor
 /*template<class T>
@@ -374,7 +380,7 @@ Data<T>*  Data<T>::operator!( ){
 #endif
   std::vector<T> *result = new std::vector<T>;
   result->reserve(vectorMeasurements->size());
-  Data<T>* val = new Data<T>(data_type,"|"+defination,id,result);
+  Data<T>* val = new Data<T>(data_type,"!"+defination,id,result);
   std::transform(vectorMeasurements->begin(),vectorMeasurements->end(),back_inserter(*result),std::logical_not<T>());
 #ifdef DEB
   std::cout<< "vector calculated for operation:"<<val->getDefination()<< std::endl;
@@ -483,7 +489,6 @@ Data<T>:: ~Data(){
 
 template<class T>
 std::vector<std::string>* Data<T>:: transformVectorToString(){
-  std::vector<std::string> * vectorMeasurementsString;
   if(vectorMeasurementsString == NULL|| vectorMeasurementsString->size() == 0){
     vectorMeasurementsString = new std::vector<std::string>;
     for(T s: *vectorMeasurements){

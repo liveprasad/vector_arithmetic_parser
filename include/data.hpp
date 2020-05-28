@@ -14,6 +14,7 @@ class DataHolder{
     std::string defination;
     std::string id;
     DataType::Type data_type;
+    std::vector<std::string> * vectorMeasurementsString = NULL;
   public:   
     DataHolder();
     virtual ~DataHolder()= 0;
@@ -23,6 +24,7 @@ class DataHolder{
     std::string getId();
     DataType::Type getType();
     void setId(std::string id);
+    void setDefination(std::string);
     virtual DataHolder* operator+(DataHolder *  ) = 0;
     virtual DataHolder* operator*(DataHolder *  ) = 0;
     virtual DataHolder* operator-(DataHolder *  ) = 0;

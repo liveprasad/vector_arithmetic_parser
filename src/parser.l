@@ -9,7 +9,7 @@
   
 /* Rule Section */
 %% 
-[a-zA-Z0-9]+ { 
+[a-zA-Z0-9_]+ { 
           yylval.str=strdup(yytext); 
           return ID; 
   

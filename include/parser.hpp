@@ -29,7 +29,7 @@ class Parser{
       ~Parser();
       static Parser *initialize(DataLoader *loader);
       static Parser *getInstance();
-      int evaluate(const char * str);
+      int evaluate(const char* table_name ,const char * expression,const char * expressionId);
       std::string getExpressionId();
       std::string add(std::string id1,std::string id2);
       std::string sub(std::string id1,std::string id2);

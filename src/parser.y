@@ -19,7 +19,7 @@
   
 %left '(' ')' 
 
-%left '='
+%left '=' '!'
 
 %type<str> E ID exp MATCH
   
@@ -110,24 +110,27 @@ Parser::~Parser(){
       delete cache;
 }
 
-int Parser::evaluate(const char* expression) 
+int Parser::evaluate(const char* table_name, const char* expression,const char* expressionId) 
 { 
    //char *s=(char *) malloc(5000* sizeof(char));
  
-   expressionId = "foo";
+   this->expressionId = std::string(expressionId);
    #ifdef DEB
      printf("provided expression is %s****\n",expression );
    #endif
-  
+    
    YY_BUFFER_STATE buffer = yy_scan_string(expression);
    int r = yyparse();
    yy_delete_buffer(buffer);
+   DataHolder * d =cache->getData(expressionId);
+   d->setDefination(std::string(expression));
    #ifdef DEB
-      DataHolder * d =cache->getData(expressionId);
-      std::vector<std::string> * v =d->transformVectorToString();
-      std::cout<<"\n transformVectorToString"<<v->size() << std::endl;
+      std::vector<std::string> *v =d->transformVectorToString();
+      std::cout<<"\n final vector is "<<v->size() << std::endl;
       for_each(v->begin(),v->end(),[](std::string str){std::cout<<str <<" ";});
    #endif
+   fflush(stdin);
+   loader->insertData(d);
    return 0;
 } 
 void yyerror(const char* err) 
