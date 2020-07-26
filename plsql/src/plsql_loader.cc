@@ -11,12 +11,12 @@ DataHolder* PlsqlLoader::getData(std::string code){
     
     try
     {
-        pqxx::connection *C= ConnectionFactory::getInstance()->getConnection();
+        pqxx::connection C= ConnectionFactory::getInstance()->getConnection();
 	//  =("dbname = postgres user = postgres hostaddr = 127.0.0.1 port = 5432" );
 #ifdef DEB
-	std::cout << "Connected to " << C->dbname() << std::endl;
+	std::cout << "Connected to " << C.dbname() << std::endl;
 #endif
-	pqxx::work work{*C};
+	pqxx::work work{C};
 
         pqxx::result R{work.exec("SELECT *  FROM "+table_name+" where code ='" + code+"'")};
 #ifdef DEB
@@ -59,7 +59,8 @@ DataHolder* PlsqlLoader::getData(std::string code){
 
 void PlsqlLoader::insertData(DataHolder* data){
         
-   pqxx:: work w{*( ConnectionFactory::getInstance()->getConnection())};
+   pqxx::connection connection= ConnectionFactory::getInstance()->getConnection();
+   pqxx:: work w{ connection};
    std::string sql = tranformToString(data);
 #ifdef DEB
    std::cout<< sql << std::endl;

@@ -19,7 +19,6 @@ std::string FactoryConf::getPort(){
 
 ConnectionFactory::ConnectionFactory(){
    conf = new FactoryConf();
-   connection = NULL;
 }
 
 ConnectionFactory::ConnectionFactory(FactoryConf* conf){
@@ -32,7 +31,7 @@ ConnectionFactory* ConnectionFactory::getInstance(){
 
 ConnectionFactory* ConnectionFactory::initialize(FactoryConf *conf){
   if(INSTANCE == NULL){
-    if(conf != NULL)
+    if(conf == NULL)
       INSTANCE = new ConnectionFactory();
     else
       INSTANCE = new ConnectionFactory(conf);
@@ -40,14 +39,13 @@ ConnectionFactory* ConnectionFactory::initialize(FactoryConf *conf){
   return INSTANCE;
 }
 
-pqxx::connection* ConnectionFactory::getConnection(){
+pqxx::connection ConnectionFactory::getConnection(){
    std::string connStr = getConnString();
 #ifdef DEB
    printf("connection string : %s ", connStr.c_str() );
    fflush(stdin);
 #endif
-   if(connection == NULL)
-      connection = new pqxx::connection(connStr);
+   pqxx::connection connection(connStr);
    return connection;
 }
 

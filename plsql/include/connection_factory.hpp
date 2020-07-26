@@ -28,7 +28,6 @@ class ConnectionFactory{
   private:
     FactoryConf *conf;
     static ConnectionFactory* INSTANCE;
-    pqxx::connection * connection;
     std::string connectionString ;
     ConnectionFactory();
     ConnectionFactory(FactoryConf * conf);
@@ -36,7 +35,7 @@ class ConnectionFactory{
     ~ConnectionFactory();
     static ConnectionFactory* getInstance();
     static ConnectionFactory* initialize(FactoryConf *conf);
-    pqxx::connection* getConnection();
+    pqxx::connection getConnection();
     void closeConnection();
     std::string getConnString();
     

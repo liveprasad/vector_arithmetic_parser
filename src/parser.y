@@ -19,7 +19,9 @@
   
 %left '(' ')' 
 
-%left '=' '!'
+%left '&' '|'
+
+%right '=' '!'
 
 %type<str> E ID exp MATCH
   

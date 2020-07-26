@@ -2,8 +2,8 @@ CC=g++
 INCLUDE :=${PARSER_ROOT}/include
 SRC := ${PARSER_ROOT}/src
 OUT := ${PARSER_ROOT}/out
-CFLAGS := -shared  -g -std=c++11 -Wno-deprecated-register  
-CFLAGS_17 := -shared  -g -std=c++17 
+CFLAGS := -shared  -g -std=c++11 -Wno-deprecated-register -DDEB 
+CFLAGS_17 := -shared  -g -std=c++17 -DDEB
 LIB_PARSER := libparser.so
                    
 all : ${LIB_PARSER}
@@ -18,7 +18,7 @@ outdir :
 	mkdir -p ${OUT}/src ${OUT}/include ${OUT}/obj
 
 out/yacc : ${SRC}/parser.y
-	yacc  -o out/src/y.tab.c --define=out/include/y.tab.h  ${SRC}/parser.y
+	bison  -o out/src/y.tab.c --defines=out/include/y.tab.h  ${SRC}/parser.y
 
 out/lexer : ${SRC}/parser.l
 	flex  -o out/src/lex.yy.c  ${SRC}/parser.l
@@ -51,3 +51,5 @@ obj/data_cache : ${SRC}/data_cache.cc
 clean:
 	rm -rf ${PARSER_ROOT}/lib
 	rm -rf ${PARSER_ROOT}/out
+
+#g++ -o main  driver.cc -L./lib/ -lparser -I./include -I./static_loader/include -I./plsql/include -std=c++17

@@ -10,7 +10,7 @@ int main(int argc,char** argv){
   //std::string file = "files/sample_table.txt";
   //StaticLoader* loader= new StaticLoader(file);
   FactoryConf *conf = new FactoryConf(); 
-  ConnectionFactory::getInstance()->initialize(conf);
+  ConnectionFactory::initialize(conf);
   PlsqlLoader * loader = new PlsqlLoader(std::string(argv[1]));
   Parser::initialize(loader);
   Parser* p=Parser::getInstance();
