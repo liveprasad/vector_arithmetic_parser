@@ -8,6 +8,7 @@
 #include <iterator>
 #include <stddef.h>
 #include <cmath>
+#include <sstream>
 class DataHolder{
   protected:
     std::string uuid;
@@ -79,9 +80,7 @@ class Data:public DataHolder{
     DataHolder* operator&(Data<S>* );
     
     //comparision operators
-    DataHolder* operator==(std::string s){
-	return NULL;
-    }
+    DataHolder* operator==(std::string s);
     //unary operators
     //arithmatic operators
     Data<T>* operator-( );

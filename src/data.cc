@@ -517,6 +517,24 @@ DataString::DataString(std::string uuid,std::string id,std::string defination,st
   this->vectorMeasurements = vectorMeasurements;
   std::cout<<"allocations of data of size  "<< vectorMeasurements->size() <<std::endl ;
 }
+template<class T>
+DataHolder* Data<T>::operator==(std::string pattern){
+#ifdef DEB
+  std::cout<<"= operator overloaded for string vector " << id << " and "<< "search " << pattern << std::endl; 
+#endif
+  std::vector<bool>* v = new std::vector<bool>; 
+  Data<bool>* data = new Data<bool>(DataType::Type::BIT,defination+"="+pattern,id,v);
+  v->reserve(vectorMeasurements->size());
+  //DataType::Type dataType = this->data_type;
+  std::stringstream convert(pattern);
+  T match;
+  convert >> match;
+  for(T val: *vectorMeasurements){
+	v->push_back(val == match);
+  }
+  //std::transform(vectorMeasurements->begin(),vectorMeasurements->end(),std::back_inserter(*v),[&match](T &val){return val==match;});
+  return data;
+}
 
 DataHolder* DataString::operator==(std::string pattern){
 #ifdef DEB
@@ -525,6 +543,9 @@ DataHolder* DataString::operator==(std::string pattern){
   std::vector<bool>* v = new std::vector<bool>; 
   Data<bool>* data = new Data<bool>(DataType::Type::BIT,defination+"="+pattern,id,v);
   v->reserve(vectorMeasurements->size());
-  std::transform(vectorMeasurements->begin(),vectorMeasurements->end(),std::back_inserter(*v),[&pattern](std::string val){return val==pattern;});
+  //DataType::Type dataType = this->data_type;
+  std::stringstream convert(pattern);
+  std::transform(vectorMeasurements->begin(),vectorMeasurements->end(),std::back_inserter(*v),[&pattern](std::string &val){return val==pattern;});
   return data;
 }
+

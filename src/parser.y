@@ -19,19 +19,19 @@
   
 %left '(' ')' 
 
-%left '&' '|'
+%left '&' '|' '!'
 
-%right '=' '!'
+%right '='
 
-%type<str> E ID exp MATCH
+%type<str> E F ID exp MATCH
   
 /* Rule Section */
 %% 
   
-exp: E{ 
+exp: E';'{ 
   
          std::string s =(Parser::getInstance())->getExpressionId();
-         //printf("\nResult=%s for %s \n",$$, s.c_str()); 
+         printf("\nResult=%s for %s \n",$$, s.c_str()); 
 	 DataHolder * d =Parser::getInstance()->getCache()->getData(std::string($$));
          d->setId(s);
 	 Parser::getInstance()->getCache()->insertData(d);
@@ -39,45 +39,51 @@ exp: E{
 	 return 0; 
   
         }; 
- E:E'+'E{
+ E:E'+'F{
              //$$ = std::string($1)+ std::string($2);
  	    $$ = strdup(Parser::getInstance()->add(std::string($1) , std::string($3)).c_str()) ;
 	    //$$ = &s[0];
 	} 
   
- |E'-'E {
+ |E'-'F {
  	    $$ = strdup(Parser::getInstance()->sub(std::string($1) , std::string($3)).c_str());
 	    //$$ = &s[0];
 	} 
   
- |E'*'E {
+ |E'*'F {
  	    $$ = strdup(Parser::getInstance()->mul(std::string($1) , std::string($3)).c_str());
         } 
   
- |E'/'E {
+ |E'/'F {
  	    $$ = strdup(Parser::getInstance()->div(std::string($1) , std::string($3)).c_str());
         }
- |'-'E  {
-	    $$ = strdup(Parser::getInstance()->uMinus(std::string($2)).c_str());
-        }
- |E'|'E {
+ |E'|'F {
   	    $$ = strdup(Parser::getInstance()->bitwiseOr(std::string($1),std::string($3)).c_str());
         }  
- |E'&'E {
+ |E'&'F {
             $$ = strdup(Parser::getInstance()->bitwiseAnd(std::string($1),std::string($3)).c_str());
 	}
+ |E'%'F {
+            $$ = strdup(Parser::getInstance()->mod(std::string($1),std::string($3)).c_str());
+        } 
+ |E'='MATCH {
+            $$ = strdup(Parser::getInstance()->match(std::string($1),std::string($3)).c_str());  
+        }
+ | F {
+        $$=$1;
+        #ifdef DEB
+           printf("%s is considered as factor to expression \n", $1);
+        #endif
+      } 
+; 
+ F:'('E')' { $$=$2;} 
  |'!'E  {
  	    $$ = strdup(Parser::getInstance()->bitwiseNot(std::string($2)).c_str());
  
         }
- |E'%'E {
-            $$ = strdup(Parser::getInstance()->mod(std::string($1),std::string($3)).c_str());
-        } 
-|E'='MATCH {
-            $$ = strdup(Parser::getInstance()->match(std::string($1),std::string($3)).c_str());  
+ |'-'E  {
+	    $$ = strdup(Parser::getInstance()->uMinus(std::string($2)).c_str());
         }
-  
- |'('E')' {$$=$2;} 
   
  | ID {
         $$=$1;
